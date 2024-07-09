@@ -31,7 +31,7 @@ function oldScrabbleScorer(word) {
 // don't change the names or your program won't work as expected. //
 
 function initialPrompt() {
-   let word = input.question(`Let's play some Scrabble!
+   let word = input.question(`Let's play some Scrabble!\n
 Enter a word to score: `);
    return word;
 }
@@ -41,10 +41,7 @@ let newPointStructure = transform(oldPointStructure);
 let simpleScorer = function (word) {
    let score = 0;
    for (let i = 0; i < word.length; i++){
-      if (word[i] === ' ') {
-         score;
-      }
-      else {
+      if (word[i] !== ' ') {
          score++;
       }
    }
@@ -57,10 +54,7 @@ let vowelBonusScorer = function (word) {
    wordArr.forEach((x) => {
      if (x === 'a' || x === 'e' || x === 'i' || x === 'o' || x === 'u') {
        score += 3;
-     } else if (x === ' ') {
-       score;
-     } 
-     else {
+     } else if (x !== ' ') {
        score++;
      }
    });
@@ -71,6 +65,7 @@ let vowelBonusScorer = function (word) {
 let scrabbleScorer = function (word) {
    word = word.toLowerCase();
    let score = 0;
+   newPointStructure[' '] = 0;
 	for (let i = 0; i < word.length; i++) {
 	  for (const pointValue in newPointStructure) {
 		 if (pointValue.includes(word[i])) {
@@ -97,10 +92,9 @@ const scoringAlgorithms = [
       description: "The traditional scoring algorithm.",
       scorerFunction: scrabbleScorer
    }
-
 ];
 
-function scorerPrompt(arrScoringAlgorithims, word) {
+function scorerPrompt(arrScoringAlgorithms, word) {
    let questionPrompt = `Which scoring algorithm would you like to use?
 
 0 - Simple: One point per character
@@ -108,17 +102,17 @@ function scorerPrompt(arrScoringAlgorithims, word) {
 2 - Scrabble: Uses scrabble point system
 Enter 0, 1, or 2: `;
 
-   let userEntry = Number(input.question(questionPrompt));
    let score = 0;
-   while (userEntry < 0 || userEntry > 2 || isNaN(userEntry)) {
-      userEntry = input.question(questionPrompt);
-   }
+   let userEntry;
+   do {
+      userEntry = Number(input.question(questionPrompt));
+   } while (userEntry < 0 || userEntry > 2 || isNaN(userEntry));
    if (userEntry === 0){
-      score = arrScoringAlgorithims[0].scorerFunction(word);
+      score = arrScoringAlgorithms[0].scorerFunction(word);
    } else if (userEntry === 1){
-      score = arrScoringAlgorithims[1].scorerFunction(word);
+      score = arrScoringAlgorithms[1].scorerFunction(word);
    } else {
-      score = arrScoringAlgorithims[2].scorerFunction(word);
+      score = arrScoringAlgorithms[2].scorerFunction(word);
    } 
    return score;
 }
@@ -130,7 +124,6 @@ function transform(oldPointStructure) {
          newPointStructure[oldPointStructure[property][i].toLowerCase()] = Number(property);
       }
    }
-   //newPointStructure[' '] = 0;
    return newPointStructure;
 }
 
